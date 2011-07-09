@@ -1,0 +1,30 @@
+Django ImageMagick Mod
+
+
+Overview:
+This project exists because I was unable to get PIL working correctly in my fastcgi environment for bluehost shared linux hosting.
+
+Django models.ImageField depends on PIL. Also, thumbnailing for the feincms medialibrary content type depends on PIL.
+
+This project contains replacement versions for the specific files that depend on PIL to switch to the ImageMagick convert command.
+
+Versioning Issues:
+Currently the files are a drop in replacement for Django 1.3, and Feincms 1.3. If running a later version diff the files to make sure things are current. Also, the files will have to be re-applied every time you update to a newer version.
+
+Security Issues:
+Because this code works by calling command line programs (convert and identify) it opens Django up for a command injection attack. The new code does NOT do input sanitation, so it should not be used in contexts where untrusted input is provided for the filename.
+
+
+
+Install sh:
+# Replace files in django to not depend on PIL
+pushd <virtual environment>/lib/python2.7/site-packages/Django-1.3-py2.7.egg/django
+    cp ~/<path_to_project>/images.py core/files/images.py
+    cp ~/<path_to_project>/fields.py forms/fields.py
+    cp ~/<path_to_project>/validation.py core/management/validation.py
+popd
+
+# Replace file in feincms
+pushd <path to feincms>
+	cp ~/<path_to_project>/feincms_thumbnail.py templatetags/feincms_thumbnail.py
+popd
